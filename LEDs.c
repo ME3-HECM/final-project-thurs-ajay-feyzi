@@ -1,8 +1,7 @@
 #include <xc.h>
 #include "LEDs.h"
 
-
-void LEDs_buttons_init(void){
+void LEDsInit(void){
     //Set all LED pins as output
     TRISGbits.TRISG0 = 0; 
     TRISEbits.TRISE7 = 0; 
@@ -14,7 +13,6 @@ void LEDs_buttons_init(void){
     TRISDbits.TRISD4 = 0; 
     TRISHbits.TRISH0 = 0; 
     TRISFbits.TRISF0 = 0; 
-
     //Set all LED outputs as zero
     RedLight = 0;
     BlueLight = 0;
@@ -26,13 +24,6 @@ void LEDs_buttons_init(void){
     BrakeLight = 0;
     LeftLamp = 0;
     RightLamp = 0;
-  
-    // Button RF2 and RF3 - for debugging
-    TRISFbits.TRISF2=1; 
-    ANSELFbits.ANSELF2=0;
-    TRISFbits.TRISF3=1; 
-    ANSELFbits.ANSELF3=0; 
-    
 }
 
 
@@ -42,8 +33,7 @@ void LightToggle(void){
     GreenLight = !GreenLight;
 }
 
-
-void LightTest(void){
+void LEDtest(void){
     for(char i=0; i <4;i++){
         RedLight = !RedLight;
         BlueLight = !BlueLight;
@@ -55,7 +45,8 @@ void LightTest(void){
         BrakeLight = !BrakeLight;
         LeftLamp = !LeftLamp;
         RightLamp = !RightLamp;
-        __delay_ms(500);
+        __delay_ms(250);
     }
 }
+
 

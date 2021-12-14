@@ -21,18 +21,15 @@
 #define BrakeLight LATDbits.LATD4 
 #define LeftLamp LATFbits.LATF0 
 #define RightLamp LATHbits.LATH0 
-#define ButtonRF2 !PORTFbits.RF2
-#define ButtonRF3 !PORTFbits.RF3
+
 
 /*************************  Function Prototypes ********************************/
 
 
 /************
  * Function to set all LED pins as output and set output to zero
- * And configure buttons RF2 and RF3
  ************/
-void LEDs_buttons_init(void);
-
+void LEDsInit(void);
 
 
 /************
@@ -45,9 +42,9 @@ void LightToggle(void);
 /****** Functions for Testing Purposes - Will be removed from final build *****/
 
 /*************
- * Function to test that LEDs work by toggling them on/off twice 
+ * Function to test that LEDs work 
  *************/
-void LightTest(void);
+void LEDTest(void);
 
 
 #endif

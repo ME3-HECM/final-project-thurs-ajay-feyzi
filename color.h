@@ -3,29 +3,34 @@
 
 #include <xc.h>
 
-
 #define _XTAL_FREQ 64000000 //note intrinsic _delay function is 62.5ns at 64,000,000Hz  
 
-/*TODO: 
- * UPDATE CALIBRATION INSTRUCTIONS 
- * Update LED_cross_talk to be a constant
- */
+/*************************  Color Card Structure ********************************/
 
-
-/* Color Values
- * 1:Red    5: Pink
- * 2:Green  6: Orange 
- * 3:Blue   7: Light Blue
- * 4:Yellow 8: White
- * 9: Black       
- */
+struct color_card { 
+    unsigned int red;           // raw red readings
+    unsigned int green;         // raw green readings
+    unsigned int blue;          // raw blue readings
+    unsigned int clear;         // raw clear readings
+    __int24 red_real;           // corrected red reading
+    __int24 green_real;         // corrected green reading
+    __int24 blue_real;          // corrected blue reading
+    __int24 clear_real;         // corrected clear reading
+    char redPercentage;         // percentage red of clear channel
+    char greenPercentage;       // percentage green of clear channel
+    char bluePercentage;        // percentage blue of clear channel
+};
 
 
 /*************************  Variable Prototypes ********************************/
 
+
 unsigned int red, green, blue, clear;
-unsigned int int_low, int_high; // Interrupt thresholds
-unsigned int LED_cross_talk[4] = {484,268,183,993}; // Cross talk values precalculated
+unsigned int int_low, int_high;         // Interrupt thresholds
+unsigned int LED_and_amb_read[4];      // light from ambient + LED cross talk + LED reflection {red,green,blue,clear)
+unsigned int ambient[4];               // read color channel values
+unsigned int LED_cross_talk[4] = {993,484,268,183};
+//unsigned int LED_cross_talk[4] = {484,268,183,993};
 
 /*************************  Function Prototypes ********************************/
 
@@ -40,16 +45,15 @@ void color_click_init(void);
  ***********************************************/
 void color_click_interrupt_init(void);
 
-
 /**********************************************
- *  Function to turn off clicker interrupt 
+ *  Function to to turn off color click interrupt
  ***********************************************/
 void color_click_interrupt_off(void);
 
 
 /********************************************//**
- *  Function to write to the colour click module
- *  address is the register within the colour click to write to
+ *  Function to write to the color click module
+ *  address is the register within the color click to write to
  *	value is the value that will be written to that address
  ***********************************************/
 void color_writetoaddr(char address, char value);
@@ -64,7 +68,8 @@ unsigned int color_read(unsigned char address);
 /**********************************************
  *  Function that calls color_read for all four RGBC channels
  ***********************************************/
-void read_All_Colors(void);
+//void read_All_Colors(void);
+void read_All_Colors(unsigned int *writeArray);
 
 
 /***********************************************
@@ -76,19 +81,16 @@ void color_int_clear(void);
  * Function to take RGBC channel readings and return a 
  * a char corresponding to the color
  ******************/
-char decide_color(void);
+//int decide_color(void);
+int decide_color(struct color_card *c);
 
-
-/*****************
- * Test function - we assign color manually
- ******************/
-char decide_color_test(void);
+void correct_readings(struct color_card *c, unsigned int *readArray1, unsigned int *readArray2,unsigned int *readArray3);
 
 
 /****** Functions for Testing Purposes - Will be removed from final build *****/
 
 /**********************************************
- *  Function to convert colour reading to string
+ *  Function to convert color reading to string
  ***********************************************/
 void Color2String(char *ptr, unsigned int *pval);
 
@@ -104,17 +106,9 @@ void SendColorReadings(void);
  ***********************************************/
 void get_int_status(void);
 
-
 /**********************************************
  * Function to calibrate interrupt thresholds
-// Calibrate interrupt threshold instructions:
-    // 1. Hold blue card up to front of buggy with a few millimeters gap while perpendicular to the floor
-    // 2. press the left button (RF3)
-    // 3. Leave blue card in front of buggy for at least a second
-    // 4. Remove blue card and press button and wait for at least one second
-    // 5. Add black card approximately 7 cm away from the front of the buggy and press the button again, wait for one second
-    // 6. Remove the black card
-    // 7. Place buggy at the start point of the tracking course and press left button again to end calibration
+ * 
  ***********************************************/
 void interrupt_threshold_calibrate(void);
 
